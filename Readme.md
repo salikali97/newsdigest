@@ -46,7 +46,7 @@ Create a .env file in the langchain-service directory and add the following vari
 
 makefile
 Copy code
-LANGCHAIN_API_KEY=<your-langchain-api-key>
+OPENAI_API_KEY=<your-langchain-api-key>
 Run the Flask Service:
 bash
 Copy code
