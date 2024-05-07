@@ -1,7 +1,7 @@
-News Summarization Microservices
+#News Summarization Microservices
 This project comprises two microservices: one built with FastAPI for interacting with the News API and calling the Langchain API to summarize news articles, and the other built with Flask to process news articles using the Langchain model and return the summarized results.
 
-Setup Instructions
+#Setup Instructions
 FastAPI Service
 Clone the Repository:
 bash
@@ -55,7 +55,7 @@ Usage
 Once both services are running, you can access the FastAPI service at http://localhost:8000 and the Langchain service at http://localhost:5000. Refer to the API documentation provided by FastAPI for available endpoints and parameters.
 
 
-News Aggregator API Documentation
+#News Aggregator API Documentation
 This API provides endpoints to interact with the News Aggregator service. Below are the available endpoints:
 
 Base URL
