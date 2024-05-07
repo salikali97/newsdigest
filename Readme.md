@@ -1,4 +1,6 @@
 #News Summarization Microservices
+
+
 This project comprises two microservices: one built with FastAPI for interacting with the News API and calling the Langchain API to summarize news articles, and the other built with Flask to process news articles using the Langchain model and return the summarized results.
 
 #Setup Instructions
@@ -22,12 +24,13 @@ Create a .env file in the fastapi-service directory and add the following variab
 
 makefile
 Copy code
-API_KEY=<your-news-api-key>
+API_KEY=<your-news-api-key> which will be your external news api key
 Run the FastAPI Service:
 bash
 Copy code
 uvicorn main:app --reload
-Langchain Service
+
+#Langchain Service
 Navigate to the Langchain Service Directory:
 bash
 Copy code
