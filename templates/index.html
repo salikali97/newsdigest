@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>News Aggregator</title>
+    <style>
+
+ 
+
+        /* CSS for loader */
+        .loader {
+            border: 4px solid #f3f3f3; /* Light grey */
+            border-top: 4px solid #3498db; /* Blue */
+            border-radius: 50%;
+            width: 30px;
+            height: 30px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto;
+            margin-top: 20px;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        /* Rest of the CSS styles */
+        body {
+            background: linear-gradient(90deg, #2162b9 0%, #4d3caf 50%, #aa00ff 100%);
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+        }
+
+       
+            .container {
+        max-width: 800px;
+        margin: 20px auto;
+        background-color: #fff;
+        padding: 20px;
+        border-radius: 8px;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        h1 {
+            color: #333;
+            text-align: center;
+        }
+
+        .search-box {
+            margin-bottom: 20px;
+            text-align: center;
+        }
+
+        .search-input {
+            padding: 10px;
+            width: 60%;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            margin-right: 10px;
+        }
+
+        .search-button {
+            padding: 10px 20px;
+            background-color: #007bff;
+            color: #fff;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+
+        .search-button:hover {
+            background-color: #0056b3;
+        }
+
+        .article {
+            margin-bottom: 20px;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            background-color: #f9f9f9;
+        }
+
+        .article h2 {
+            color: #007bff;
+            margin-bottom: 10px;
+        }
+
+        .article p {
+            color: #555;
+            margin-bottom: 10px;
+        }
+
+        .article a {
+            color: #007bff;
+            text-decoration: none;
+        }
+
+        .article a:hover {
+            text-decoration: underline;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>News Digest</h1>
+        <div class="search-box">
+            <input type="text" id="keywordInput" class="search-input" placeholder="Enter keywords">
+            <button id="searchButton" class="search-button">Search</button>
+        </div>
+        <!-- Loader element -->
+        <div id="loader" class="loader" style="display: none;"></div>
+        <div id="articlesContainer">
+            <!-- Articles will be dynamically added here -->
+        </div>
+    </div>
+
+    <script>
+        document.getElementById('searchButton').addEventListener('click', function() {
+            var keywords = document.getElementById('keywordInput').value.split(',');
+            keywords = keywords.map(function(keyword) {
+                return "'" + keyword.trim() + "'";
+            });
+            var url = 'http://localhost:8000/api/v1/news?keyword=[' + keywords.join(',') + ']';
+            
+            document.getElementById('searchButton').disabled = true;
+            // Show loader when button is clicked
+            document.getElementById('loader').style.display = 'block';
+
+            fetch(url)
+            .then(response => {
+                // Hide loader when response is received
+                document.getElementById('loader').style.display = 'none';
+
+                if (!response.ok) {
+                    if (response.status === 400) {
+                        return response.json().then(data => {
+                            throw new Error(data.message);
+                        });
+                    } else {
+                        throw new Error('Error fetching articles: ' + response.statusText);
+                    }
+                }
+                return response.json();
+            })
+            .then(data => {
+                var articlesContainer = document.getElementById('articlesContainer');
+                articlesContainer.innerHTML = '';
+
+                if (data.message && data.message.data) {  // Check if data is present
+                    data.message.data.forEach(article => {  // Extract data from 'data' key
+                        var articleElement = document.createElement('div');
+                        articleElement.classList.add('article');
+
+                        var titleElement = document.createElement('h2');
+                        titleElement.textContent = article.title;
+
+                        var summaryElement = document.createElement('p');
+                        summaryElement.textContent = article.content;
+
+                        var linkElement = document.createElement('a');
+                        linkElement.href = article.url;
+                        linkElement.textContent = 'Read more';
+                        linkElement.target = '_blank';
+
+                        articleElement.appendChild(titleElement);
+                        articleElement.appendChild(summaryElement);
+                        articleElement.appendChild(linkElement);
+
+                        articlesContainer.appendChild(articleElement);
+                    });
+                } else {
+                    var errorMessage = document.createElement('p');
+                    errorMessage.textContent = 'No articles found.';
+                    articlesContainer.appendChild(errorMessage);
+                }
+                document.getElementById('searchButton').disabled = false;
+            })
+            .catch(error => {
+                // Hide loader in case of error
+                document.getElementById('loader').style.display = 'none';
+
+                // Handle error
+                var articlesContainer = document.getElementById('articlesContainer');
+                articlesContainer.innerHTML = '<p style="color: red;">' + error.message + '</p>';
+            });
+            document.getElementById('searchButton').disabled = false;
+        });
+</script>
+</body>
+</html>
